@@ -70,6 +70,20 @@ body{
   .order button{display:inline-block;margin-top:8px;padding:8px 12px}
 }
 
+/* Mobile scrolling: prefer page (body) scrolling to avoid clipping the top area */
+@media (max-width:480px){
+  /* Stop centering vertically, use normal document flow so the browser's
+     native scrolling reveals the top of the card and avoids overlays. */
+  body{align-items:stretch;justify-content:flex-start;padding:12px}
+
+  /* Let the page scroll naturally; don't clip the widget */
+  .wrapper{max-height:none;display:block}
+  .widget{overflow:visible;max-height:none}
+
+  /* Slightly smaller shadow for mobile */
+  .widget{box-shadow:0 4px 12px rgba(0,0,0,0.06)}
+}
+
 /* Navigation Buttons */
 .nav-buttons{display:flex;gap:10px;padding:12px;border-top:1px solid #f0e9eb;justify-content:space-between}
 .nav-btn{flex:1;padding:10px 12px;border-radius:8px;border:1px solid #f0dbe0;color:#b34b67;text-decoration:none;font-size:12px;font-weight:500;transition:background 0.2s;cursor:pointer;text-align:center}
