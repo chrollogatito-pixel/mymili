@@ -114,8 +114,9 @@ class Command(BaseCommand):
                     for pat in patterns:
                         content = re.sub(pat, '', content)
 
-                    # Also remove any empty containers left behind (small cleanup)
-                    content = re.sub(r"(?is)<div[^>]*>\s*</div>", '', content)
+                    # NOTE: do not remove empty <div> containers here — some UI
+                    # images are implemented as empty <div class="..." style="background: url(...)">
+                    # and removing them breaks thumbnails. Keep HTML structure intact.
 
                     out_bytes = content.encode('utf-8')
                     out_file.write_bytes(out_bytes)
