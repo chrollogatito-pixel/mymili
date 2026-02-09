@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Message</title>
+  <link rel="stylesheet" href="/static/amor/css/main.css">
+</head>
+<body>
+  <div class="wrapper proposal-wrapper">
+    <div class="proposal-widget">
+      <div class="proposal-header">
+        <div class="proposal-avatar"></div>
+        <span class="proposal-title">mi amor ♡</span>
+      </div>
+
+      <div class="proposal-content" id="proposalContent">
+        <div class="proposal-date">Sunday, February 8 2025</div>
+        
+        <div class="proposal-message-box">
+          <p class="proposal-message">¿Quieres ser mi novia? 💕</p>
+        </div>
+
+        <div class="proposal-buttons">
+          <button class="proposal-btn accept" id="acceptBtn">Sí</button>
+          <button class="proposal-btn reject" id="rejectBtn">No</button>
+        </div>
+      </div>
+
+      <div class="proposal-footer">
+        <a href="/diary/" class="footer-link">← return home</a>
+        <span class="footer-credit">cr. tu mujer ♡</span>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="/diary/" class="nav-btn nav-prev">← anterior</a>
+        <a href="/" class="nav-btn nav-next">siguiente →</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const contentDiv = document.getElementById('proposalContent');
+    const acceptBtn = document.getElementById('acceptBtn');
+    const rejectBtn = document.getElementById('rejectBtn');
+
+    // Cargar fecha de inicio si existe
+    let startDate = localStorage.getItem('relationshipStartDate');
+
+    function updateCounter() {
+      if (!startDate) return;
+
+      const now = new Date();
+      const start = new Date(startDate);
+      const diff = now - start;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      const counterDiv = document.getElementById('counterDisplay');
+      if (counterDiv) {
+        counterDiv.innerHTML = `
+          <div class="counter-title">days with my love</div>
+          <div class="counter-numbers">
+            <div class="counter-item"><span class="counter-value">${String(days).padStart(2, '0')}</span><span class="counter-label">D</span></div>
+            <div class="counter-item"><span class="counter-value">${String(hours).padStart(2, '0')}</span><span class="counter-label">H</span></div>
+            <div class="counter-item"><span class="counter-value">${String(minutes).padStart(2, '0')}</span><span class="counter-label">M</span></div>
+            <div class="counter-item"><span class="counter-value">${String(seconds).padStart(2, '0')}</span><span class="counter-label">S</span></div>
+          </div>
+        `;
+      }
+    }
+
+    function showCounter() {
+      if (!startDate) {
+        startDate = new Date().toISOString();
+        localStorage.setItem('relationshipStartDate', startDate);
+      }
+
+      contentDiv.innerHTML = `
+        <div id="counterDisplay"></div>
+        <div class="counter-message">¡Te amo! ♡</div>
+      `;
+
+      updateCounter();
+      setInterval(updateCounter, 1000);
+    }
+
+    acceptBtn.addEventListener('click', function() {
+      showCounter();
+    });
+
+    rejectBtn.addEventListener('click', function() {
+      this.textContent = '¡Nooo! 😭';
+    });
+
+    // Si ya hay una relación guardada, mostrar el contador
+    if (startDate) {
+      showCounter();
+      setInterval(updateCounter, 1000);
+    }
+  </script>
+</body>
+</html>

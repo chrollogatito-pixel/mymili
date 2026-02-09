@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Página principal</title>
+  <link rel="stylesheet" href="/static/amor/css/main.css">
+  </head>
+<body>
+  <div class="wrapper">
+    <div class="widget">
+      <div class="widget-top">
+        <div class="tabs">
+          <div class="tab" id="currentDate">Feb 6</div>
+          <div class="tab">12.7k</div>
+        </div>
+        <div class="file">mi mili ♡</div>
+        <div class="avatar"></div>
+      </div>
+
+      <div class="messages">
+        <div class="msg me">
+          <strong>me:</strong>
+          <div class="bubble label">entre palabras suaves</div>
+        </div>
+
+        <div class="msg anon">
+          <div class="bubble reply">y cosas que no siempre sé decir</div>
+        </div>
+
+        <div class="msg me">
+          <strong>me:</strong>
+          <div class="bubble label">encontré este lugar</div>
+        </div>
+
+        <div class="msg anon">
+          <div class="bubble reply">para ti</div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <a href="/playlists/" class="nav-btn nav-next">siguiente →</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Actualizar fecha dinámicamente según zona horaria de Argentina/Chile
+    function updateDate() {
+      const now = new Date();
+      const options = { 
+        timeZone: 'America/Argentina/Buenos_Aires',
+        month: 'short',
+        day: 'numeric'
+      };
+      const dateFormatter = new Intl.DateTimeFormat('en-US', options);
+      const formattedDate = dateFormatter.format(now);
+      document.getElementById('currentDate').textContent = formattedDate;
+    }
+    
+    updateDate();
+    setInterval(updateDate, 1000);
+  </script>
+
+    <!-- Firebase realtime demo (replace config placeholders with your Firebase project's config) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script>
+      // --- Replace these values with your Firebase project's config ---
+      const firebaseConfig = {
+        apiKey: "REPLACE_API_KEY",
+        authDomain: "REPLACE_PROJECT.firebaseapp.com",
+        databaseURL: "https://REPLACE_PROJECT.firebaseio.com",
+        projectId: "REPLACE_PROJECT",
+        storageBucket: "REPLACE_PROJECT.appspot.com",
+        messagingSenderId: "REPLACE_SENDER_ID",
+        appId: "REPLACE_APP_ID"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+
+      // Simple chat UI appended to the page
+      const chatContainer = document.createElement('div');
+      chatContainer.style.margin = '20px';
+      chatContainer.innerHTML = `
+        <h3>Live demo (Firebase)</h3>
+        <div id="messages" style="max-height:200px;overflow:auto;border:1px solid #ddd;padding:8px;margin-bottom:8px"></div>
+        <input id="msgInput" placeholder="Escribe un mensaje" style="width:70%" />
+        <button id="sendBtn">Enviar</button>
+      `;
+      document.body.appendChild(chatContainer);
+
+      const messagesEl = document.getElementById('messages');
+      const msgInput = document.getElementById('msgInput');
+      const sendBtn = document.getElementById('sendBtn');
+
+      // Listen for new messages
+      const messagesRef = db.ref('public_messages');
+      messagesRef.limitToLast(50).on('child_added', snapshot => {
+        const data = snapshot.val();
+        const div = document.createElement('div');
+        div.textContent = (data.name ? data.name + ': ' : '') + data.text;
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      });
+
+      // Send a message (writes directly to Realtime DB)
+      sendBtn.addEventListener('click', () => {
+        const text = msgInput.value.trim();
+        if (!text) return;
+        messagesRef.push({ text: text, name: 'visitor', ts: Date.now() });
+        msgInput.value = '';
+      });
+    </script>
+</body>
+</html>

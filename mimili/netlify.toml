@@ -1,0 +1,10 @@
+[build]
+  # Install dependencies and run the management command that renders views
+  # and collects static files into `dist/` for Netlify to publish.
+  command = "python -m pip install -r requirements.txt && python mimili/manage.py export_static -o dist"
+  publish = "dist"
+
+[build.environment]
+# Optional: request a specific Python version for Netlify's build image.
+# Netlify supports runtime.txt too; adjust if you need a different Python.
+PYTHON_VERSION = "3.11"
