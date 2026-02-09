@@ -79,7 +79,12 @@ class Command(BaseCommand):
                 if hasattr(resp, 'render'):
                     resp = resp.render()
 
-                content = resp.content
+                # normalize to text so we can safely search/remove unwanted widgets
+                try:
+                    content = resp.content.decode('utf-8')
+                except Exception:
+                    # fallback to raw bytes write if decoding fails
+                    content = None
 
                 # Determine output file path
                 if path == '/' or path == '':
@@ -90,7 +95,33 @@ class Command(BaseCommand):
                     out_dir.mkdir(parents=True, exist_ok=True)
                     out_file = out_dir / 'index.html'
 
-                out_file.write_bytes(content)
+                # If content was decoded, run simple sanitizers to remove
+                # accidental Firebase demo/chat widget snippets before writing.
+                if isinstance(content, str):
+                    import re
+
+                    # Remove any block that mentions Live demo (Firebase), public_messages
+                    # or form labels like "Escribe un mensaje" to be safe.
+                    # This uses non-greedy matching and is intentionally conservative.
+                    patterns = [
+                        r"(?is)<div[^>]*>.*?Live\s*demo(?:\s*\(Firebase\))?.*?</div>",
+                        r"(?is)<div[^>]*>.*?Escribe\s+un\s+mensaje.*?</div>",
+                        r"(?is)<script[^>]*src=[\"'][^\"']*firebase[^\"']*[\"'][^>]*>.*?</script>",
+                        r"(?is)<script[^>]*>.*?REPLACE_API_KEY.*?</script>",
+                        r"(?is)<script[^>]*>.*?public_messages.*?</script>",
+                    ]
+
+                    for pat in patterns:
+                        content = re.sub(pat, '', content)
+
+                    # Also remove any empty containers left behind (small cleanup)
+                    content = re.sub(r"(?is)<div[^>]*>\s*</div>", '', content)
+
+                    out_bytes = content.encode('utf-8')
+                    out_file.write_bytes(out_bytes)
+                else:
+                    # binary fallback (rare)
+                    out_file.write_bytes(resp.content)
                 self.stdout.write(f'Wrote {out_file}')
             except Exception as exc:
                 self.stdout.write(self.style.WARNING(f'Skipping {path}: {exc}'))

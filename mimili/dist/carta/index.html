@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Carta</title>
+  <link rel="stylesheet" href="/static/amor/css/main.css">
+</head>
+<body>
+  <div class="wrapper">
+    <h1>La carta</h1>
+
+    <section class="menu">
+      <article class="menu-item">
+        <h2>Entrada: Empanaditas</h2>
+        <p>Pequeñas empanadas de dulce de leche.</p>
+        <div class="price">$4</div>
+      </article>
+
+      <article class="menu-item">
+        <h2>Principal: Milanga</h2>
+        <p>La clásica milanesa con amor.</p>
+        <div class="price">$10</div>
+      </article>
+
+      <article class="menu-item">
+        <h2>Postre: Tarta de limón</h2>
+        <p>Acidita y dulce, perfecta para cerrar.</p>
+        <div class="price">$6</div>
+      </article>
+    </section>
+
+    <section class="photo">
+      <h3>Foto</h3>
+      <!-- If you have an image in static/amor/images add its filename here -->
+      <img src="/static/amor/images/sample-food.jpg" alt="plato" style="max-width:320px;border-radius:8px;">
+    </section>
+
+    <section class="order">
+      <h3>Hacer una pedida</h3>
+      <form action="#" method="post" onsubmit="alert('Gracias! (demo)'); return false;">
+        <label for="order_input">Escribe tu pedido</label>
+        <input id="order_input" name="order" type="text" placeholder="Quiero una milanga" style="width:60%;">
+        <button type="submit">Enviar pedida</button>
+      </form>
+      <p class="note">(Demo estático: en producción la pedida debe enviarse a un backend o servicio como Firebase)</p>
+    </section>
+
+    <div class="nav-buttons">
+      <a href="/" class="nav-btn">← volver</a>
+    </div>
+  </div>
+</body>
+</html>
